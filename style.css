@@ -1,0 +1,33 @@
+pre {
+    background-color: #e7e7e7 !important;
+    color: black !important;
+}
+
+.string.key {
+    color: black;
+    font-weight: normal;
+}
+
+.string.value {
+    color: green;
+    font-weight: normal;
+}
+
+.null {
+    color: red;
+    font-weight: normal;
+}
+
+.number {
+    color: blue;
+    font-weight: normal;
+}
+
+.string {
+    color: green;
+}
+
+.keyword {
+    color: red;
+}
+
