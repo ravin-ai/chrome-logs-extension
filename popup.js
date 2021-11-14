@@ -40,7 +40,7 @@ const convertStrToObjLike = (str, returnType) => {
                 // json not valid
             } else {
                 try {
-                    selectionObj['msgObj'] = JSON.parse(selectionObj['msg'].substring(start, end));
+                    selectionObj['msgObj'] = JSON.parse(selectionObj['msg'].substring(start, end + 1));
                 } catch (error) {
                     // failed to convert msg key string to json
                 }
