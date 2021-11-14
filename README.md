@@ -7,7 +7,7 @@ INSTALL:
 4. Turn on 'Developer mode'
 5. Click 'Load unpacked'
 6. Select the extension directory
-7. And Walla... You good to go
+7. And Walla... You are good to go
 
 USAGE:
 1. On AWS 'Log Groups' or 'Log Insight'
