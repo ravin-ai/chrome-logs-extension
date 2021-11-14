@@ -24,28 +24,34 @@ const actionClickedExtention = () => {
     });
 }
 
+const findAndParseStrToJson = (str) => {
+    let parsed = null;
+
+    const start = str.indexOf('{');
+    const end = str.lastIndexOf('}');
+    if ((start < 0) || (end < 0)) {
+        // json not valid
+    } else {
+        try {
+            parsed = JSON.parse(str.substring(start, end + 1));
+        } catch (error) {
+            // failed to find and convert string to json
+        }
+    }
+    return parsed;
+}
+
 const convertStrToObjLike = (str, returnType) => {
     let objLike = null;
     try {
-        const selectionObj = JSON.parse(str);
+        const selectionObj = findAndParseStrToJson(str) || {};
 
         if (selectionObj['meta']) {
             selectionObj['meta'] = JSON.parse(selectionObj['meta']);
         }
 
         if (selectionObj['msg']) {
-            const start = selectionObj['msg'].indexOf('{');
-            const end = selectionObj['msg'].lastIndexOf('}');
-            if ((start < 0) || (end < 0)) {
-                // json not valid
-            } else {
-                try {
-                    selectionObj['msgObj'] = JSON.parse(selectionObj['msg'].substring(start, end + 1));
-                } catch (error) {
-                    // failed to convert msg key string to json
-                }
-
-            }
+            selectionObj['msgObj'] = findAndParseStrToJson(selectionObj['msg']);
         }
 
         // if (selectionObj['msg']?.startsWith(`amqp::post to queue`)) {
