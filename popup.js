@@ -19,7 +19,7 @@ const actionClickedExtention = () => {
     chrome.tabs.executeScript({
         code: `document.getElementById("microConsole-Logs").contentWindow.getSelection().toString()`
     }, function (selection) {
-        const objLike = convertStrToObjLike(selection, 'string');
+        const objLike = convertStrToObjLike(selection[0], 'string');
         document.getElementById("output").innerHTML = objLike;
     });
 }
@@ -44,14 +44,20 @@ const findAndParseStrToJson = (str) => {
 const convertStrToObjLike = (str, returnType) => {
     let objLike = null;
     try {
-        const selectionObj = findAndParseStrToJson(str) || {};
+        const selectionObj = findAndParseStrToJson(str) || {str, msgErr: "Cannot convert string to json"};
 
         if (selectionObj['meta']) {
             selectionObj['meta'] = JSON.parse(selectionObj['meta']);
         }
 
         if (selectionObj['msg']) {
-            selectionObj['msgObj'] = findAndParseStrToJson(selectionObj['msg']);
+            const msgObj = findAndParseStrToJson(selectionObj['msg']);
+            if (msgObj) {
+                selectionObj['msgObj'] = msgObj;
+            } else {
+                const msgArr = selectionObj['msg'].split('|').map(cell => cell.trim());
+                selectionObj['msgArr'] = msgArr;
+            }
         }
 
         // if (selectionObj['msg']?.startsWith(`amqp::post to queue`)) {
