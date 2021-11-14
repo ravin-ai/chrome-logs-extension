@@ -33,40 +33,55 @@ const convertStrToObjLike = (str, returnType) => {
             selectionObj['meta'] = JSON.parse(selectionObj['meta']);
         }
 
-        if (selectionObj['msg']?.startsWith(`amqp::post to queue`)) {
-            const startMessage = str.indexOf(`message: {`);
-            const endMessage = str.indexOf(`}, priority:`);
+        if (selectionObj['msg']) {
+            const start = selectionObj['msg'].indexOf('{');
+            const end = selectionObj['msg'].lastIndexOf('}');
+            if ((start < 0) || (end < 0)) {
+                // json not valid
+            } else {
+                try {
+                    selectionObj['msgObj'] = JSON.parse(selectionObj['msg'].substring(start, end));
+                } catch (error) {
+                    // failed to convert msg key string to json
+                }
 
-            if (endMessage < 0) return;
-
-            const messageLength = (endMessage - 8) - startMessage;
-            const message = str.substr(startMessage + 9, messageLength);
-            selectionObj['msgObj'] = JSON.parse(JSON.parse(`"${message}"`));
+            }
         }
 
-        if (selectionObj['msg']?.startsWith(`BootStrapper::[[`)) {
-            const bootStrapperArray = selectionObj['msg'].replace(`BootStrapper::`, "");
-            selectionObj['msgObj'] = JSON.parse(bootStrapperArray);
-        }
+        // if (selectionObj['msg']?.startsWith(`amqp::post to queue`)) {
+        //     const startMessage = str.indexOf(`message: {`);
+        //     const endMessage = str.indexOf(`}, priority:`);
+        //
+        //     if (endMessage < 0) return;
+        //
+        //     const messageLength = (endMessage - 8) - startMessage;
+        //     const message = str.substr(startMessage + 9, messageLength);
+        //     selectionObj['msgObj'] = JSON.parse(JSON.parse(`"${message}"`));
+        // }
 
-        if (selectionObj['msg']?.startsWith(`UserPermissions init:`)) {
-            const slimbeUserPermissions = selectionObj['msg'].replace(`UserPermissions init: permissions `, "");
-            selectionObj['msgObj'] = JSON.parse(slimbeUserPermissions);
-        }
+        // if (selectionObj['msg']?.startsWith(`BootStrapper::[[`)) {
+        //     const bootStrapperArray = selectionObj['msg'].replace(`BootStrapper::`, "");
+        //     selectionObj['msgObj'] = JSON.parse(bootStrapperArray);
+        // }
 
-        if (selectionObj['msg']?.startsWith(`handlingAQMP::Received, from:`)) {
-            const arrObj = selectionObj['msg'].split(`msg:`)
-            selectionObj['msgObj'] = JSON.parse(arrObj[1]);
-        }
+        // if (selectionObj['msg']?.startsWith(`UserPermissions init:`)) {
+        //     const slimbeUserPermissions = selectionObj['msg'].replace(`UserPermissions init: permissions `, "");
+        //     selectionObj['msgObj'] = JSON.parse(slimbeUserPermissions);
+        // }
 
-        if (selectionObj['msg']?.startsWith(`redis::addPairKeyString:`)) {
-            const arrObj = selectionObj['msg'].split(`value:`);
-            selectionObj['msgObj'] = JSON.parse(arrObj[1]);
-        }
+        // if (selectionObj['msg']?.startsWith(`handlingAQMP::Received, from:`)) {
+        //     const arrObj = selectionObj['msg'].split(`msg:`)
+        //     selectionObj['msgObj'] = JSON.parse(arrObj[1]);
+        // }
 
-        if (selectionObj['msg']?.startsWith(`handlingAQMP::Received, from:`)) {
+        // if (selectionObj['msg']?.startsWith(`redis::addPairKeyString:`)) {
+        //     const arrObj = selectionObj['msg'].split(`value:`);
+        //     selectionObj['msgObj'] = JSON.parse(arrObj[1]);
+        // }
 
-        }
+        // if (selectionObj['msg']?.startsWith(`handlingAQMP::Received, from:`)) {
+        //
+        // }
 
         if (returnType === 'html_collapse') {
             const jsonAsHtmlWithCollapse = renderjson.set_icons('+', '-')
@@ -77,7 +92,6 @@ const convertStrToObjLike = (str, returnType) => {
 
         if (returnType === 'string') {
             objLike = JSON.stringify(selectionObj, null, 2);
-            // objLike = JSON.stringify({name: "ziv"}, null, 2);
         }
     } catch (error) {
         objLike = str;
