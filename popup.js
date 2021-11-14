@@ -49,6 +49,11 @@ const convertStrToObjLike = (str, returnType) => {
             selectionObj['msgObj'] = JSON.parse(bootStrapperArray);
         }
 
+        if (selectionObj['msg']?.startsWith(`UserPermissions init:`)) {
+            const slimbeUserPermissions = selectionObj['msg'].replace(`UserPermissions init: permissions `, "");
+            selectionObj['msgObj'] = JSON.parse(slimbeUserPermissions);
+        }
+
         if (selectionObj['msg']?.startsWith(`handlingAQMP::Received, from:`)) {
             const arrObj = selectionObj['msg'].split(`msg:`)
             selectionObj['msgObj'] = JSON.parse(arrObj[1]);
