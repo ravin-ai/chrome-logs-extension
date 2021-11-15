@@ -55,8 +55,10 @@ const convertStrToObjLike = (str, returnType) => {
             if (msgObj) {
                 selectionObj['msgObj'] = msgObj;
             } else {
-                const msgArr = selectionObj['msg'].split('|').map(cell => cell.trim());
-                selectionObj['msgArr'] = msgArr;
+                if (selectionObj['msg'].includes('|')) {
+                    const msgArr = selectionObj['msg'].split('|').map(cell => cell.trim());
+                    selectionObj['msgArr'] = msgArr;
+                }
             }
         }
 
